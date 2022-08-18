@@ -9,10 +9,19 @@ public protocol SingleComponent: Component {
     init()
 }
 
+@dynamicMemberLookup
 public struct Single<A> where A: SingleComponent {
     public let nexus: Nexus
     public let traits: FamilyTraitSet
     public let entityId: EntityIdentifier
+
+    public subscript<T>(dynamicMember keyPath: WritableKeyPath<A, T>) -> T {
+        get { component[keyPath: keyPath] }
+        set {
+            var comp = component
+            comp[keyPath: keyPath] = newValue
+        }
+    }
 }
 
 extension Single: Equatable {
